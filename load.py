@@ -1,28 +1,32 @@
 import sys
+import thread
 import Tkinter as tk
 import myNotebook as nb
 from config import config
 
-import socketio
-import eventlet
-import eventlet.wsgi
 from flask import Flask, render_template
+from flask_socketio import SocketIO
 
-#sio = socketio.Server()
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'secret!'
+socketio = SocketIO(app)
 
-this = sys.modules[__name__]	# For holding module globals
 
 @app.route('/')
 def index():
    """Serve the client-side application."""
-   return render_template('chat/index.html')
+   #return render_template('/home/muldy/Desktop/EDMarketConnector/MissionReport/chat/index.html')
+   return "hello!" 
 
+
+def flaskThread():
+    app.run()
 
 def plugin_start():
    """
    Load this plugin into EDMC
    """
+   thread.start_new_thread(flaskThread,())
    print "MissionReport Loaded"
    return "Mission Report"
 
