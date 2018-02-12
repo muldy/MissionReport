@@ -9,7 +9,7 @@ from flask import Flask, render_template, send_from_directory
 from flask_socketio import SocketIO
 
 app = Flask(__name__,static_url_path='/static')
-app.config['SECRET_KEY'] = 'secret!'
+#app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
 
@@ -18,17 +18,22 @@ def index():
    """Serve the client-side application."""
    return render_template('index.html')
 
-@app.route('/js/<path:path>')
-def send_js(path):
-        return send_from_directory('js', path)
+@socketio.on('connect', namespace='/chat')
+def connect(sid, environ):
+    print("connect ", sid)
 
-@app.route('/css/<path:path>')
-def send_css(path):
-        return send_from_directory('js', path)
+@socketio.on('chat message', namespace='/chat')
+def message(sid, data):
+    print("message ", data)
+    socketio.emit('reply', room=sid)
 
+@socketio.on('disconnect', namespace='/chat')
+def disconnect(sid):
+    print('disconnect ', sid)
 
 def flaskThread():
-    app.run(host='0.0.0.0.',port=8666)
+    #app.run(host='0.0.0.0.',port=8666)
+    socketio.run(app,host='0.0.0.0.',port=8666)
 
 def plugin_start():
    """
