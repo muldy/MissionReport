@@ -1,8 +1,22 @@
+import sys
 import Tkinter as tk
 import myNotebook as nb
 from config import config
 
+import socketio
+import eventlet
+import eventlet.wsgi
+from flask import Flask, render_template
+
+#sio = socketio.Server()
+app = Flask(__name__)
+
 this = sys.modules[__name__]	# For holding module globals
+
+@app.route('/')
+def index():
+   """Serve the client-side application."""
+   return render_template('chat/index.html')
 
 
 def plugin_start():
