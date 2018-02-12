@@ -1,5 +1,6 @@
 import sys
 import thread
+import os
 import Tkinter as tk
 import myNotebook as nb
 from config import config
@@ -15,8 +16,7 @@ socketio = SocketIO(app)
 @app.route('/')
 def index():
    """Serve the client-side application."""
-   #return render_template('/home/muldy/Desktop/EDMarketConnector/MissionReport/chat/index.html')
-   return "hello!" 
+   return render_template('index.html')
 
 
 def flaskThread():
