@@ -10,30 +10,30 @@ from flask_socketio import SocketIO
 
 app = Flask(__name__,static_url_path='/static')
 #app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app)
+socketio = SocketIO(app, async_mode=async_mode)
 
 
 @app.route('/')
 def index():
    """Serve the client-side application."""
-   return render_template('index.html')
+   return render_template('index.html', async_mode=socketio.async_mode)
 
-@socketio.on('connect', namespace='/chat')
+@socketio.on('connect', namespace='/')
 def connect(sid, environ):
     print("connect ", sid)
 
-@socketio.on('chat message', namespace='/chat')
+@socketio.on('chat message', namespace='/')
 def message(sid, data):
     print("message ", data)
     socketio.emit('reply', room=sid)
 
-@socketio.on('disconnect', namespace='/chat')
+@socketio.on('disconnect', namespace='/')
 def disconnect(sid):
     print('disconnect ', sid)
 
 def flaskThread():
     #app.run(host='0.0.0.0.',port=8666)
-    socketio.run(app,host='0.0.0.0.',port=8666)
+    socketio.run(app,host='0.0.0.0.',port=8666, debug=True)
 
 def plugin_start():
    """
