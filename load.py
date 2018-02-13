@@ -5,7 +5,7 @@ import os
 import Tkinter as tk
 import myNotebook as nb
 from config import config
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, session, request, send_from_directory
 from flask_socketio import SocketIO, emit, join_room, leave_room, close_room, rooms, disconnect
 
 # Set this variable to "threading", "eventlet" or "gevent" to test the
