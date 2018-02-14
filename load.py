@@ -20,6 +20,13 @@ thready = None
 flask_thread= None
 thread_lock = Lock()
 
+this = sys.modules[__name__]	# For holding module globals
+this.server_local=1
+this.server_address="0.0.0.0"
+this.server_port=8666
+
+
+
 @app.route('/')
 def index():
 	"""Serve the client-side application."""
@@ -112,8 +119,8 @@ def test_disconnect():
 	print('Client disconnected', request.sid)
 
 def flaskThread():
-	#app.run(host='0.0.0.0.',port=8666)
-	socketio.run(app,host='0.0.0.0.',port=8666)
+    #app.run(host='0.0.0.0.',port=8666)
+    socketio.run(app,host=this.server_address,this.port=this.server_port)
 
 def plugin_start():
 	"""
@@ -137,19 +144,29 @@ def plugin_stop():
 
 
 def plugin_prefs(parent, cmdr, is_beta):
-	"""
-	Return a TK Frame for adding to the EDMC settings dialog.
-	"""
-	this.mysetting = tk.IntVar(value=config.getint("MyPluginSetting"))	# Retrieve saved value from config
-	frame = nb.Frame(parent)
-	nb.Label(frame, text="Hello").grid()
-	nb.Label(frame, text="Commander").grid()
-	nb.Checkbutton(frame, text="My Setting", variable=this.mysetting).grid()
+    """
+    Return a TK Frame for adding to the EDMC settings dialog.
+    """
+    PADX = 10
+    BUTTONX = 12	# indent Checkbuttons and Radiobuttons
+    PADY = 2		# close spacing
 
-	return frame
+    frame = nb.Frame(parent)
+    frame.columnconfigure(1, weight=1)
 
-def prefs_changed(cmdr, is_beta):
-	"""
-	Save settings.
-	"""
-	config.set('MyPluginSetting', this.mysetting.getint())	# Store new value in config
+    this.server_local= tk.IntVar(value=config.getint("MR_server_local"))	# Retrieve saved value from config
+    this.server_local_button=nb.Checkbutton(frame, text="Run local (127.0.0.1)", variable=,this.server_local).grid()
+    this.server_local_button.grid(columnspan=2, padx=BUTTONX, pady=(5,0), sticky=tk.W)
+
+    nb.Label(frame, text="Port").grid()
+    nb.Entry(frame, text="port").grid()
+    this.server_port= tk.IntVar(value=config.getint("MR_server_port"))	# Retrieve saved value from config
+
+    return frame
+
+#def prefs_changed(cmdr, is_beta):
+#	"""
+#	Save settings.
+#	"""
+#    #config.set('MyPluginSetting', this.mysetting.getint())	# Store new value in config
+#    pass
