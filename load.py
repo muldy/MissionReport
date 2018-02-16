@@ -15,8 +15,8 @@ async_mode = None
 
 app = Flask(__name__,static_url_path='/static')
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode=async_mode, message_queue='redis://')
-socketio_c = SocketIO(message_queue='redis://')
+socketio = SocketIO(app, async_mode=async_mode)#, message_queue='redis://')
+#socketio_c = SocketIO(message_queue='redis://')
 thready = None
 flask_thread= None
 thread_lock = Lock()
@@ -172,7 +172,7 @@ def plugin_stop():
 #    #config.set('MyPluginSetting', this.mysetting.getint())	# Store new value in config
 #    pass
 def journal_entry(cmdr, is_beta, system, station, entry, state):
-	socketio_c.emit("my_response",entry)
+	socketio.emit("my_response",entry)
 
 def cmdr_data(data, is_beta):
-	socketio_c.emit("my_response",data)
+	socketio.emit("my_response",data)
