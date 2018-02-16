@@ -15,7 +15,8 @@ async_mode = None
 
 app = Flask(__name__,static_url_path='/static')
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode=async_mode)
+socketio = SocketIO(app, async_mode=async_mode, message_queue='redis://')
+socketio_c = SocketIO(message_queue='redis://')
 thready = None
 flask_thread= None
 thread_lock = Lock()
@@ -108,9 +109,9 @@ def ping_pong():
 @socketio.on('connect', namespace='/test')
 def test_connect():
 	global thready
-	with thread_lock:
-		if thready is None:
-			thready = socketio.start_background_task(target=background_thread)
+	#with thread_lock:
+	#	if thready is None:
+	#		thready = socketio.start_background_task(target=background_thread)
 	emit('my_response', {'data': 'Connected', 'count': 0})
 
 
@@ -120,7 +121,7 @@ def test_disconnect():
 
 def flaskThread():
     #app.run(host='0.0.0.0.',port=8666)
-    socketio.run(app,host=this.server_address,this.port=this.server_port)
+    socketio.run(app,host=this.server_address,port=this.server_port)
 
 def plugin_start():
 	"""
@@ -143,26 +144,26 @@ def plugin_stop():
 
 
 
-def plugin_prefs(parent, cmdr, is_beta):
-    """
-    Return a TK Frame for adding to the EDMC settings dialog.
-    """
-    PADX = 10
-    BUTTONX = 12	# indent Checkbuttons and Radiobuttons
-    PADY = 2		# close spacing
-
-    frame = nb.Frame(parent)
-    frame.columnconfigure(1, weight=1)
-
-    this.server_local= tk.IntVar(value=config.getint("MR_server_local"))	# Retrieve saved value from config
-    this.server_local_button=nb.Checkbutton(frame, text="Run local (127.0.0.1)", variable=,this.server_local).grid()
-    this.server_local_button.grid(columnspan=2, padx=BUTTONX, pady=(5,0), sticky=tk.W)
-
-    nb.Label(frame, text="Port").grid()
-    nb.Entry(frame, text="port").grid()
-    this.server_port= tk.IntVar(value=config.getint("MR_server_port"))	# Retrieve saved value from config
-
-    return frame
+#def plugin_prefs(parent, cmdr, is_beta):
+#    """
+#    Return a TK Frame for adding to the EDMC settings dialog.
+#    """
+#    PADX = 10
+#    BUTTONX = 12	# indent Checkbuttons and Radiobuttons
+#    PADY = 2		# close spacing
+#
+#    frame = nb.Frame(parent)
+#    frame.columnconfigure(1, weight=1)
+#
+#    this.server_local= tk.IntVar(value=config.getint("MR_server_local"))	# Retrieve saved value from config
+#    this.server_local_button=nb.Checkbutton(frame, text="Run local (127.0.0.1)", variable=,this.server_local).grid()
+#    this.server_local_button.grid(columnspan=2, padx=BUTTONX, pady=(5,0), sticky=tk.W)
+#
+#    nb.Label(frame, text="Port").grid()
+#    nb.Entry(frame, text="port").grid()
+#    this.server_port= tk.IntVar(value=config.getint("MR_server_port"))	# Retrieve saved value from config
+#
+#    return frame
 
 #def prefs_changed(cmdr, is_beta):
 #	"""
@@ -170,3 +171,8 @@ def plugin_prefs(parent, cmdr, is_beta):
 #	"""
 #    #config.set('MyPluginSetting', this.mysetting.getint())	# Store new value in config
 #    pass
+def journal_entry(cmdr, is_beta, system, station, entry, state):
+	socketio_c.emit("my_response",entry)
+
+def cmdr_data(data, is_beta):
+	socketio_c.emit("my_response",data)
