@@ -16,8 +16,8 @@ async_mode = None
 
 app = Flask(__name__,static_url_path='/static')
 app.config['SECRET_KEY'] = 'secret!'
-socketio = SocketIO(app, async_mode=async_mode, message_queue='redis://')
-socketio_c = SocketIO(message_queue='redis://')
+socketio = SocketIO(app, async_mode=async_mode)#, message_queue='redis://')
+#socketio_c = SocketIO(message_queue='redis://')
 thready = None
 flask_thread= None
 thread_lock = Lock()
@@ -114,7 +114,7 @@ def test_connect():
 	#	if thready is None:
 	#		thready = socketio.start_background_task(target=background_thread)
 	#emit('my_response', {'data': 'Connected', 'count': 0})
-        socketio_c.emit('my_response', {'data': 'Connected', 'count': 0})
+        socketio.emit('my_response', {'data': 'Connected', 'count': 0})
 
 
 @socketio.on('disconnect', namespace='/test')
@@ -151,14 +151,14 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
     print str(entry)
     print "RESPONSE: **********************" 
     #socketio_c.emit("my_response",json.loads(entry))
-    socketio_c.emit("my_response",{'data': entry, 'count': 0},namespace='/test') 
+    socketio.emit("my_response",{'data': entry, 'count': 0},namespace='/test') 
 
 def cmdr_data(data, is_beta):
     print "RESPONSE: **********************"
     print str(data) 
     print "RESPONSE: **********************"
     #socketio_c.emit("my_response",json.loads(data)) 
-    socketio_c.emit("my_response",{'data': data, 'count': 0},namespace='/test') 
+    socketio.emit("my_response",{'data': data, 'count': 0},namespace='/test') 
 
 
 
