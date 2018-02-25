@@ -151,14 +151,14 @@ def journal_entry(cmdr, is_beta, system, station, entry, state):
     print str(entry)
     print "RESPONSE: **********************" 
     #socketio_c.emit("my_response",json.loads(entry))
-    socketio.emit("my_response",{'data': entry, 'count': 0},namespace='/test') 
+    socketio.emit("event",{'data': entry, 'count': 0},namespace='/test') 
 
 def cmdr_data(data, is_beta):
     print "RESPONSE: **********************"
     print str(data) 
     print "RESPONSE: **********************"
     #socketio_c.emit("my_response",json.loads(data)) 
-    socketio.emit("my_response",{'data': data, 'count': 0},namespace='/test') 
+    socketio.emit("event",{'data': data, 'count': 0},namespace='/test') 
 
 
 
