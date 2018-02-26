@@ -33,7 +33,7 @@ def index():
 
 @socketio.on('connect', namespace='/main')
 def test_connect():
-    socketio.emit('status', {'data': 'Connected'})
+	socketio.emit('status', {'data': 'Connected'})
 	print('Client connected')
 
 
@@ -47,6 +47,7 @@ def flaskThread():
 
 
 def plugin_start():
+	global flask_thread
 	"""
 	Load this plugin into EDMC
 	"""
@@ -55,12 +56,13 @@ def plugin_start():
 	return "Mission Report"
 
 def plugin_stop():
+	global flask_thread
 	"""
 	EDMC is closing
 	"""
-    if flask_thread is not None:
-        flask_thread.stop()
-	print "MissionReport unloaded!"
+	if flask_thread is not None:
+		flask_thread.stop()
+		print "MissionReport unloaded!"
 
 def journal_entry(cmdr, is_beta, system, station, entry, state):
     socketio.emit("journal",{'data': entry},namespace='/main') 
